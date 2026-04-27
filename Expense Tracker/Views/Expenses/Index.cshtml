@@ -1,0 +1,155 @@
+﻿@model IEnumerable<Expense_Tracker.Models.Expense>
+
+@{
+    ViewData["Title"] = "Expense Tracker";
+    var total = Model.Count();
+}
+
+@if (!Model.Any())
+{
+    <p>No expenses yet. Start by adding one.</p>
+}
+
+<style>
+    body {
+        background: #0f172a;
+        color: white;
+        font-family: 'Segoe UI';
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 20px;
+    }
+
+    .card {
+        background: #020617;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #1e293b;
+    }
+
+    .btn-add {
+        background: #38bdf8;
+        padding: 10px 16px;
+        border-radius: 8px;
+        color: black;
+        text-decoration: none; 
+        display: inline-block;
+        width: fit-content;
+        max-width: 100%;
+    }
+    .alert-success{
+        background: #22c55e;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        color: black;
+    }
+    .edit {
+        background: #3b82f6;
+        color: white; 
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+
+    .delete {
+        background: #ef4444;
+        color: white; 
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+    .card p {
+        color: #ffffff;
+    }
+
+    table {
+        width: 100%;
+        margin-top: 20px;
+        color : white;
+    }
+    form input, form select {
+        background: #020617;
+        color: white;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        padding: 8px;
+        text-decoration: none; 
+        display: inline-block;
+        width: fit-content;
+        max-width: 100%;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    .edit { background: #3b82f6; padding: 6px 10px; border-radius: 6px; }
+    .delete { background: #ef4444; padding: 6px 10px; border-radius: 6px; }
+</style>
+
+@if (TempData["success"] != null)
+{
+    <div class="alert-success">
+        @TempData["success"]
+    </div>
+}
+
+<h2>My Expense Tracker</h2>
+
+<form method="get" style="margin-bottom:15px; display:flex; gap:10px;">
+
+    <input type="text" name="search" class="form-control" placeholder="Search Description" value="@(Context.Request.Query["search"])" ... />
+         
+
+    <select name="category" ...>
+    <option value="">All Categories</option>
+    <option selected="@(Context.Request.Query["category"] == "Food")">Food</option>
+    <option selected="@(Context.Request.Query["category"] == "Transport")">Transport</option>
+    <option selected="@(Context.Request.Query["category"] == "Bills")">Bills</option>
+    <option selected="@(Context.Request.Query["category"] == "Entertainment")">Entertainment</option>
+</select>
+
+    <button type="submit" class="btn-add">Filter</button>
+
+</form>
+
+<div class="card">
+    <p>Total Expenses: <strong>@total</strong></p>
+
+    <a asp-action="Create" class="btn-add">+ Add Expense</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Description</td>
+                    <td>@item.Category</td>
+                    <td>@item.Amount.ToString("C")</td>
+                    <td>@item.ExpenseDate.ToShortDateString()</td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="edit">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="delete">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
